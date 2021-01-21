@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import socket, sys
 
 #create a tcp socket
@@ -68,4 +69,3 @@ def main():
         s.close()
 if __name__ == "__main__":
     main()
-

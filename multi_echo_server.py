@@ -1,3 +1,4 @@
+from multiprocessing import Process
 import socket
 import time
 
@@ -20,13 +21,19 @@ def main():
         #continuously listen for connections
         while True:
             conn, addr = s.accept()
-            print("Connected by", addr)
-            
-            #recieve data, wait a bit, then send it back
-            full_data = conn.recv(BUFFER_SIZE)
-            time.sleep(0.5)
-            conn.sendall(full_data)
-            conn.close()
+            p = Process(target=handle_echo, args=(addr,conn))
+            p.daemon = True
+            p.start()
+
+def handle_echo(addr, conn):
+    print("Connected by", addr)
+    #recieve data, wait a bit, then send it back
+    full_data = conn.recv(BUFFER_SIZE)
+    time.sleep(0.5)
+    conn.sendall(full_data)
+    conn.shutdown(socket.SHUT_WR)
+    conn.close()    
 
 if __name__ == "__main__":
-    main()
+    main()       
+
